@@ -20,6 +20,11 @@
    display:flex;align-items:center;justify-content:center}
  .pl span::after{content:"";border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px}
  .ti{font-size:14px;line-height:1.4;font-weight:600}
+ a.hero{display:block;background:var(--card);border:1px solid var(--gold);border-radius:14px;
+   overflow:hidden;margin:10px 0 4px;text-decoration:none;color:var(--tx)}
+ a.hero img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+ a.hero .hb{padding:12px 14px} .hero .badge{color:#1a1206;background:var(--gold);font-weight:800;
+   font-size:11px;padding:2px 8px;border-radius:20px} .hero .ht{font-size:16px;font-weight:800;margin:8px 0 0;line-height:1.4}
  footer{color:var(--sub);text-align:center;font-size:12px;padding:8px 0 30px}
 </style></head><body>
 <header>
@@ -33,10 +38,18 @@
 <script>
 fetch('videos.json?_='+Date.now()).then(r=>r.json()).then(vs=>{
  const m=document.getElementById('list');
- m.innerHTML=vs.map(v=>`<a class="item" href="https://youtu.be/${v.id}">
+ const esc=s=>s.replace(/</g,'&lt;');
+ const hero=vs.find(v=>v.featured);
+ const rest=vs.filter(v=>!v.featured);
+ let html='';
+ if(hero){html+=`<a class="hero" href="https://youtu.be/${hero.id}">
+   <img loading="lazy" src="https://img.youtube.com/vi/${hero.id}/hqdefault.jpg" alt="">
+   <div class="hb"><span class="badge">🔥 いま話題の完全版</span><p class="ht">${esc(hero.title)}</p></div></a>`;}
+ html+=rest.map(v=>`<a class="item" href="https://youtu.be/${v.id}">
    <div class="th"><img loading="lazy" src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" alt="">
    <span class="pl"><span></span></span></div>
-   <div class="ti">${v.title.replace(/</g,'&lt;')}</div></a>`).join('');
+   <div class="ti">${esc(v.title)}</div></a>`).join('');
+ m.innerHTML=html;
 }).catch(e=>{document.getElementById('list').innerHTML='<p style="color:#9aa4ad">一覧を読み込めませんでした。<a style="color:#8fb7d6" href="https://www.youtube.com/@zumies_garage">チャンネルへ</a></p>';});
 </script>
 </body></html>
